@@ -54,13 +54,9 @@ export const searchInVoterSlip = async (
   file: File, 
   criteria: SearchCriteria
 ): Promise<VoterInfo[] | null> => {
-  // Graceful check for API Key to prevent immediate crash if env is missing in static build
-  const apiKey = process.env.API_KEY;
-  if (!apiKey) {
-    throw new Error("API Key is missing. Please ensure your environment is configured correctly.");
-  }
-
-  const ai = new GoogleGenAI({ apiKey: apiKey });
+  // Use API Key directly from process.env per guidelines.
+  // Assume process.env.API_KEY is pre-configured and valid.
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   const base64Data = await parseFileToBase64(file);
 
   // Construct a prompt based on provided criteria

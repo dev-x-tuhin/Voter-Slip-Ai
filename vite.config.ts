@@ -4,8 +4,7 @@ import react from '@vitejs/plugin-react';
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   // Load env file based on `mode` in the current working directory.
-  // Set the third parameter to '' to load all env regardless of the `VITE_` prefix.
-  const env = loadEnv(mode, (process as any).cwd(), '');
+  const env = loadEnv(mode, process.cwd(), '');
 
   return {
     plugins: [react()],
@@ -14,10 +13,14 @@ export default defineConfig(({ mode }) => {
     build: {
       outDir: 'dist',
       assetsDir: 'assets',
+      // Ensure source maps are generated for easier debugging if errors persist
+      sourcemap: true,
     },
     define: {
-      // This "bakes" the API key into the code at build time so it works on GitHub Pages
+      // Safely inject the API KEY
       'process.env.API_KEY': JSON.stringify(env.API_KEY),
+      // Prevent "process is not defined" error in some libraries
+      'process.env': {},
     }
   };
 });
