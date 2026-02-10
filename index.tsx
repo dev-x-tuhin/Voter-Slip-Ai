@@ -4,9 +4,8 @@ import App from './App';
 
 // Polyfill process for browser environments (GitHub Pages, etc.)
 // This prevents "ReferenceError: process is not defined" which causes white screen
-if (typeof window !== 'undefined' && !window.process) {
-  // @ts-ignore
-  window.process = { env: {} };
+if (typeof window !== 'undefined' && !(window as any).process) {
+  (window as any).process = { env: {} };
 }
 
 const rootElement = document.getElementById('root');
@@ -14,8 +13,17 @@ if (!rootElement) {
   throw new Error("Could not find root element to mount to");
 }
 
-class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean; error: Error | null }> {
-  constructor(props: { children: React.ReactNode }) {
+interface ErrorBoundaryProps {
+  children?: React.ReactNode;
+}
+
+interface ErrorBoundaryState {
+  hasError: boolean;
+  error: Error | null;
+}
+
+class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false, error: null };
   }
